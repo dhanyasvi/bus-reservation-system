@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniBus AI — Smart Bus Reservation & Fleet Management</title>
+  <meta name="description" content="Next-generation intelligent bus reservation system powered by Single-Agent and Multi-Agent AI, live 40-seat coach visualization, and real-time fleet bookings.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Subtle Background Glow Orbs -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <div class="logo-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.1 2 11.5 2 12v4c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <path d="M9 17h6"/>
+            <circle cx="17" cy="17" r="2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>OmniBus <span class="gradient-text">AI</span></h1>
+          <span class="tagline">Enterprise Bus Fleet & Agentic AI Hub</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Mode & Live System Badges -->
+    <div class="header-center">
+      <div class="agent-mode-selector" title="Switch between Single-Agent and Multi-Agent AI architecture">
+        <button class="mode-pill" id="modeSingleBtn" data-mode="single">Single Agent</button>
+        <button class="mode-pill active" id="modeMultiBtn" data-mode="multi">👥 Multi-Agent Team</button>
+      </div>
+
+      <div class="status-chip chip-db" id="dbStatusChip">
+        <span class="status-dot"></span>
+        <span class="chip-label">MySQL DB: Active</span>
+      </div>
+      <div class="status-chip chip-ai" id="aiStatusChip" title="Click to view LLM / Model status">
+        <span class="status-dot pulse"></span>
+        <span class="chip-label" id="aiStatusText">AI: Ready</span>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-right">
+      <button class="btn btn-secondary btn-sm" id="openSchedulesBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>Schedules & Fares</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" id="openSettingsBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Model & Keys</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" id="openAdminBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>Admin</span>
+      </button>
+      <button class="btn btn-primary btn-sm" id="openAuthBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span id="authBtnText">Login</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Metric Quick Stats Bar -->
+  <section class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-icon icon-cyan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <path d="M3 9h18M9 21V9"></path>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value" id="statTotalSeats">40</span>
+        <span class="stat-label">Coach Capacity</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-emerald">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value" id="statAvailableSeats">--</span>
+        <span class="stat-label">Available Free Seats</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-rose">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value" id="statBookedSeats">--</span>
+        <span class="stat-label">Active Bookings</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value" id="statRoutes">14 Routes</span>
+        <span class="stat-label">Daily Scheduled Trips</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Grid Workspace -->
+  <main class="main-workspace">
+    <!-- Left Column: Bus Visualization & Form & Bookings -->
+    <div class="workspace-left">
+      <!-- Bus Coach Visualizer Card -->
+      <section class="glass-card coach-section">
+        <div class="card-header">
+          <div class="header-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+              <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+              <path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6"/>
+            </svg>
+            <h2>Live 40-Seat Coach Layout</h2>
+          </div>
+          <div class="seat-legend">
+            <span class="legend-item"><span class="legend-swatch swatch-available"></span> Available</span>
+            <span class="legend-item"><span class="legend-swatch swatch-booked"></span> Booked</span>
+            <span class="legend-item"><span class="legend-swatch swatch-selected"></span> Selected</span>
+          </div>
+        </div>
+
+        <!-- Coach Layout Frame -->
+        <div class="bus-coach-container">
+          <div class="bus-exterior">
+            <div class="bus-front-cabin">
+              <div class="cabin-windshield">
+                <span>FRONT WINDSHIELD • PESSIMISTIC LOCKING ACTIVE</span>
+              </div>
+              <div class="driver-area">
+                <div class="driver-wheel" title="Driver Cabin">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a10 10 0 0 0 0 20"></path>
+                    <path d="M12 12 4 8"></path>
+                    <path d="M12 12l8-4"></path>
+                    <path d="M12 12v10"></path>
+                  </svg>
+                  <span>Driver</span>
+                </div>
+                <div class="bus-door">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                  </svg>
+                  <span>Entry Door</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="coach-interior">
+              <div class="seat-grid" id="seatGrid">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="seat-click-hint">
+          💡 Click any available seat above to select it into the reservation form or ask the AI assistant.
+        </div>
+      </section>
+
+      <!-- Quick Reservation Form Card -->
+      <section class="glass-card booking-form-section">
+        <div class="card-header">
+          <div class="header-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <h2>Instant Direct Reservation</h2>
+          </div>
+          <span class="badge badge-accent">Transactional Locking & Instant Payment</span>
+        </div>
+
+        <form id="reservationForm" class="reservation-form">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="passengerNameInput">Passenger Full Name</label>
+              <input type="text" id="passengerNameInput" placeholder="e.g. Ravi Kumar" required minlength="2" maxlength="80">
+            </div>
+            <div class="form-group flex-1">
+              <label for="seatNoInput">Seat Number</label>
+              <input type="number" id="seatNoInput" placeholder="1 - 40" min="1" max="40" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="sourceCitySelect">Departure City</label>
+              <select id="sourceCitySelect" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="route-swap-wrap">
+              <button type="button" class="btn-icon" id="swapCitiesBtn" title="Swap departure & destination">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m7 16-4-4 4-4"></path>
+                  <path d="m17 8 4 4-4 4"></path>
+                  <path d="M3 12h18"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="form-group flex-1">
+              <label for="destCitySelect">Destination City</label>
+              <select id="destCitySelect" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="bookSubmitBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+              <span>Confirm & Book Seat</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="clearFormBtn">Clear</button>
+          </div>
+          <div id="formAlert" class="alert-box hidden"></div>
+        </form>
+      </section>
+
+      <!-- Active Bookings Table Card -->
+      <section class="glass-card bookings-list-section">
+        <div class="card-header">
+          <div class="header-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            </svg>
+            <h2>Reservations & Payment Status</h2>
+          </div>
+          <div class="table-controls">
+            <input type="text" id="bookingSearchInput" placeholder="Filter by passenger name..." class="search-input">
+            <button class="btn btn-secondary btn-sm" id="refreshBookingsBtn" title="Refresh list">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Passenger</th>
+                <th>Route</th>
+                <th>Seat #</th>
+                <th>Fare</th>
+                <th>Payment / Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+          <div id="noBookingsMsg" class="empty-state hidden">
+            <p>No bookings found matching criteria.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column: Conversational AI Assistant -->
+    <div class="workspace-right">
+      <section class="glass-card chat-card">
+        <div class="chat-header">
+          <div class="chat-header-info">
+            <div class="ai-avatar">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                <rect x="4" y="8" width="16" height="12" rx="2"></rect>
+                <circle cx="9" cy="13" r="1.5"></circle>
+                <circle cx="15" cy="13" r="1.5"></circle>
+              </svg>
+            </div>
+            <div>
+              <h3>OmniBus AI Assistant</h3>
+              <p class="ai-subtext" id="aiSubtext">Active Mode: 👥 Multi-Agent Team (Supervisor, Booking, Ticket, Schedule)</p>
+            </div>
+          </div>
+          <button class="btn-icon" id="clearChatBtn" title="Clear conversation history">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="prompt-chips-container">
+          <span class="chips-title">Quick Actions:</span>
+          <div class="chips-scroll">
+            <button class="chip-btn" data-prompt="What is the bus schedule from Bangalore to Chennai?">🕒 Bus Schedules</button>
+            <button class="chip-btn" data-prompt="Which seats are available?">💺 Available Seats</button>
+            <button class="chip-btn" data-prompt="I want to go to Chennai from Bangalore">🚌 Go to Chennai</button>
+            <button class="chip-btn" data-prompt="Book any seat to Goa from Pune for Maya">⚡ Book Any Seat</button>
+            <button class="chip-btn" data-prompt="Where do you guys operate?">📍 Routes & Cities</button>
+            <button class="chip-btn" data-prompt="Show my bookings">📋 My Bookings</button>
+          </div>
+        </div>
+
+        <!-- Chat Stream -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Initial Welcome Message -->
+          <div class="chat-bubble assistant">
+            <div class="bubble-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="8" width="16" height="12" rx="2"></rect>
+                <circle cx="9" cy="13" r="1"></circle>
+                <circle cx="15" cy="13" r="1"></circle>
+              </svg>
+            </div>
+            <div class="bubble-content">
+              <p>👋 Welcome! I am your <strong>OmniBus AI Assistant</strong>.</p>
+              <p>Powered by our <strong>Multi-Agent Team</strong> (Supervisor, Booking Specialist, Ticket Management Specialist, and Fleet Schedule Specialist).</p>
+              <p class="bubble-hint"><em>Try asking: "What time is the bus to Chennai?", "I want to travel from Bangalore to Chennai", or "Which seats are free?"</em></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <form id="chatForm" class="chat-input-bar">
+          <input type="text" id="chatInput" placeholder="Type your message in plain English..." autocomplete="off" required>
+          <button type="submit" class="btn btn-send" id="chatSendBtn" title="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- Bus Schedules & Inventory Modal -->
+  <div class="modal-overlay hidden" id="schedulesModal">
+    <div class="modal-box glass-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <h3>Bus Fleet Schedules & Route Inventory</h3>
+        </div>
+        <button class="btn-icon" id="closeSchedulesBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>Bus #</th>
+                <th>Departure ➔ Destination</th>
+                <th>Timings</th>
+                <th>Coach Type</th>
+                <th>Fare</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="schedulesTableBody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancelSchedulesBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings & API Key Modal -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal-box glass-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <h3>LLM Model & API Key Configuration</h3>
+        </div>
+        <button class="btn-icon" id="closeSettingsBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="info-alert">
+          <strong>💡 Zero API Credits Needed:</strong>
+          The Built-in Resilient AI Engine handles bookings, modifications, cancellations, and queries automatically. If you have an OpenAI, Groq, or Gemini key, you can enter it below!
+        </div>
+
+        <div class="form-group">
+          <label>Quick Provider Presets</label>
+          <div class="preset-buttons">
+            <button type="button" class="btn btn-sm btn-outline active-preset" data-preset="resilient">Built-in Resilient Agent (No Key)</button>
+            <button type="button" class="btn btn-sm btn-outline" data-preset="groq">Groq (Free Llama 3.3)</button>
+            <button type="button" class="btn btn-sm btn-outline" data-preset="gemini">Google Gemini (Free Tier)</button>
+            <button type="button" class="btn btn-sm btn-outline" data-preset="openai">OpenAI (gpt-4o-mini)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cfgApiKey">API Key</label>
+          <div class="password-input-wrap">
+            <input type="password" id="cfgApiKey" placeholder="Enter API Key (or leave empty for Resilient Agent)">
+            <button type="button" class="btn-icon" id="toggleApiKeyVis">👁️</button>
+          </div>
+          <span class="field-hint" id="cfgCurrentKeyHint">Current: None</span>
+        </div>
+
+        <div class="form-group">
+          <label for="cfgBaseUrl">LLM Base URL</label>
+          <input type="text" id="cfgBaseUrl" placeholder="https://api.openai.com/v1">
+        </div>
+
+        <div class="form-group">
+          <label for="cfgModel">Model Name</label>
+          <input type="text" id="cfgModel" placeholder="gpt-4o-mini">
+        </div>
+
+        <div class="test-ping-bar">
+          <button type="button" class="btn btn-secondary" id="testPingBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+            <span>Test Connection / Ping</span>
+          </button>
+          <div id="pingResult" class="ping-result-box"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="saveConfigBtn">Save Configuration</button>
+        <button type="button" class="btn btn-secondary" id="cancelSettingsBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Passenger Auth Modal -->
+  <div class="modal-overlay hidden" id="authModal">
+    <div class="modal-box glass-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <h3>Passenger Account Authentication</h3>
+        </div>
+        <button class="btn-icon" id="closeAuthBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="info-alert">
+          Enter your name or email to sign in and generate a cryptographically signed JWT token for session access.
+        </div>
+        <div class="form-group">
+          <label for="loginUsername">Passenger Username / Email</label>
+          <input type="text" id="loginUsername" placeholder="e.g. ravi_kumar@travel.com">
+        </div>
+        <div id="authAlert" class="alert-box hidden"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="submitLoginBtn">Sign In / Get Token</button>
+        <button type="button" class="btn btn-secondary" id="cancelAuthBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div class="modal-overlay hidden" id="adminModal">
+    <div class="modal-box glass-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <h3>Administrator Controls</h3>
+        </div>
+        <button class="btn-icon" id="closeAdminBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="adminKeyInput">Admin API Key (X-Admin-Key)</label>
+          <input type="password" id="adminKeyInput" placeholder="Enter ADMIN_API_KEY from .env">
+        </div>
+
+        <div class="danger-zone">
+          <h4>⚠️ Danger Zone</h4>
+          <p>Delete all confirmed and cancelled bookings from the database.</p>
+          <button type="button" class="btn btn-danger" id="adminPurgeBtn">Purge All Bookings</button>
+        </div>
+        <div id="adminAlert" class="alert-box hidden"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="cancelAdminBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
